@@ -34,7 +34,7 @@ func (c *CellRange) LastCol() uint16 {
 	return c.LastColB
 }
 
-//hyperlink type's content
+// hyperlink type's content
 type HyperLink struct {
 	CellRange
 	Description      string
@@ -46,7 +46,7 @@ type HyperLink struct {
 	IsUrl            bool
 }
 
-//get the hyperlink string, use the public variable Url to get the original Url
+// get the hyperlink string, use the public variable Url to get the original Url
 func (h *HyperLink) String(wb *WorkBook) []string {
 	res := make([]string, h.LastColB-h.FristColB+1)
 	var str string
@@ -60,4 +60,13 @@ func (h *HyperLink) String(wb *WorkBook) []string {
 		res[i] = str
 	}
 	return res
+}
+
+// get the hyperlink raw value without formatting
+func (h *HyperLink) RawValue(wb *WorkBook) string {
+	if h.IsUrl {
+		return h.Url
+	} else {
+		return h.ExtendedFilePath
+	}
 }

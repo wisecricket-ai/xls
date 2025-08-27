@@ -11,9 +11,10 @@ import (
 	yymmdd "github.com/extrame/goyymmdd"
 )
 
-//content type
+// content type
 type contentHandler interface {
 	String(*WorkBook) []string
+	RawValue(*WorkBook) string
 	FirstCol() uint16
 	LastCol() uint16
 }
@@ -41,6 +42,10 @@ func (c *Col) LastCol() uint16 {
 
 func (c *Col) String(wb *WorkBook) []string {
 	return []string{"default"}
+}
+
+func (c *Col) RawValue(wb *WorkBook) string {
+	return "default"
 }
 
 type XfRk struct {
@@ -147,6 +152,13 @@ func (c *MulrkCol) String(wb *WorkBook) []string {
 	return res
 }
 
+func (c *MulrkCol) RawValue(wb *WorkBook) string {
+	if len(c.Xfrks) > 0 {
+		return c.Xfrks[0].Rk.String()
+	}
+	return ""
+}
+
 type MulBlankCol struct {
 	Col
 	Xfs      []uint16
@@ -159,6 +171,10 @@ func (c *MulBlankCol) LastCol() uint16 {
 
 func (c *MulBlankCol) String(wb *WorkBook) []string {
 	return make([]string, len(c.Xfs))
+}
+
+func (c *MulBlankCol) RawValue(wb *WorkBook) string {
+	return ""
 }
 
 type NumberCol struct {
@@ -175,6 +191,10 @@ func (c *NumberCol) String(wb *WorkBook) []string {
 	return []string{strconv.FormatFloat(c.Float, 'f', -1, 64)}
 }
 
+func (c *NumberCol) RawValue(wb *WorkBook) string {
+	return strconv.FormatFloat(c.Float, 'f', -1, 64)
+}
+
 type FormulaStringCol struct {
 	Col
 	RenderedValue string
@@ -182,6 +202,10 @@ type FormulaStringCol struct {
 
 func (c *FormulaStringCol) String(wb *WorkBook) []string {
 	return []string{c.RenderedValue}
+}
+
+func (c *FormulaStringCol) RawValue(wb *WorkBook) string {
+	return c.RenderedValue
 }
 
 //str, err = wb.get_string(buf_item, size)
@@ -202,6 +226,10 @@ func (c *FormulaCol) String(wb *WorkBook) []string {
 	return []string{"FormulaCol"}
 }
 
+func (c *FormulaCol) RawValue(wb *WorkBook) string {
+	return "FormulaCol"
+}
+
 type RkCol struct {
 	Col
 	Xfrk XfRk
@@ -209,6 +237,10 @@ type RkCol struct {
 
 func (c *RkCol) String(wb *WorkBook) []string {
 	return []string{c.Xfrk.String(wb)}
+}
+
+func (c *RkCol) RawValue(wb *WorkBook) string {
+	return c.Xfrk.Rk.String()
 }
 
 type LabelsstCol struct {
@@ -221,6 +253,10 @@ func (c *LabelsstCol) String(wb *WorkBook) []string {
 	return []string{wb.sst[int(c.Sst)]}
 }
 
+func (c *LabelsstCol) RawValue(wb *WorkBook) string {
+	return wb.sst[int(c.Sst)]
+}
+
 type labelCol struct {
 	BlankCol
 	Str string
@@ -230,6 +266,10 @@ func (c *labelCol) String(wb *WorkBook) []string {
 	return []string{c.Str}
 }
 
+func (c *labelCol) RawValue(wb *WorkBook) string {
+	return c.Str
+}
+
 type BlankCol struct {
 	Col
 	Xf uint16
@@ -237,4 +277,8 @@ type BlankCol struct {
 
 func (c *BlankCol) String(wb *WorkBook) []string {
 	return []string{""}
+}
+
+func (c *BlankCol) RawValue(wb *WorkBook) string {
+	return ""
 }

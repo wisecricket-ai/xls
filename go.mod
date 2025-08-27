@@ -1,4 +1,4 @@
-module xls
+module github.com/wisecricket-ai/xls
 
 go 1.24.4
 

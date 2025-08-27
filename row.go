@@ -46,7 +46,6 @@ func (r *Row) Col(i int) string {
 }
 
 // Raw Get the Nth Col from the Row without formatting, if has not, return nil.
-// Raw Get the Nth Col from the Row without formatting, if has not, return nil.
 func (r *Row) Raw(i int) string {
 	serial := uint16(i)
 	if ch, ok := r.cols[serial]; ok {
@@ -54,12 +53,13 @@ func (r *Row) Raw(i int) string {
 	} else {
 		for _, v := range r.cols {
 			if v.FirstCol() <= serial && v.LastCol() >= serial {
-				// Only return a value if this is actually the first column of the merged cell
-				// Don't return values for subsequent columns in the merge range
-				if v.FirstCol() == serial {
-					return v.RawValue(r.wb)
+				// For multi-column cells, get the string array and return the specific position
+				strs := v.String(r.wb)
+				index := serial - v.FirstCol()
+				if int(index) < len(strs) {
+					// Return the value at this specific position, not the raw value of the whole cell
+					return strs[index]
 				}
-				// Return empty string for other columns in the merged range
 				return ""
 			}
 		}

@@ -1,6 +1,6 @@
 module github.com/wisecricket-ai/xls
 
-go 1.24.4
+go 1.24
 
 require (
 	github.com/extrame/goyymmdd v0.0.0-20210114090516-7cc815f00d1a
